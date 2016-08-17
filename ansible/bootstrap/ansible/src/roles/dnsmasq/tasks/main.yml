@@ -1,0 +1,27 @@
+---
+
+- name: Install dnsmasq package
+  apt:
+    name: '{{ item }}'
+    state: 'latest'
+    install_recommends: False
+  with_items: [ 'dnsmasq', 'resolvconf' ]
+
+- name: Get list of local search domains
+  shell: grep search /etc/resolv.conf | cut -d' ' -f2- | tr ' ' '\n'
+  register: dnsmasq_register_search
+  changed_when: False
+
+- name: Get dnsmasq version
+  shell: dnsmasq --version | head -n 1 | awk '{print $3}'
+  register: dnsmasq_version
+  changed_when: False
+
+- name: Create main dnsmasq configuration
+  template:
+    src: 'etc/dnsmasq.conf'
+    dest: '/etc/dnsmasq.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: [ 'Test and restart dnsmasq' ]

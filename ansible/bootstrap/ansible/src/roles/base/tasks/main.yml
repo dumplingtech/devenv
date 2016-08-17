@@ -1,0 +1,49 @@
+---
+
+- name: Install packages
+  apt:
+    pkg: "{{ item }}"
+    state: present
+    install_recommends: False
+  with_items:
+    - htop
+    - jq
+    - python-passlib
+    - ntp
+    - ntpdate
+    - python-setuptools
+
+- name: Install latest pip2
+  easy_install: name=pip executable=easy_install-2.7
+
+- name: Install AWS boto library
+  pip: name=boto executable=pip2
+
+- name: Enable NTP service
+  service: name=ntp state=started enabled=yes
+
+- name: Create motu group
+  group: name=motu state=present gid=700
+
+- name: Create user groups
+  group: name={{ item.name }} state=present gid={{ item.id }}
+  with_items: motu_users
+
+- name: Create motu users
+  user: name={{ item.name }} state=present uid={{ item.id }} groups={{ item.name }},motu append=yes
+  with_items: motu_users
+
+- name: Add user pub keys
+  authorized_key: user={{ item.name }} key="{{ item.key }}"
+  with_items: motu_users
+
+- name: Delete dead users
+  user: name={{ item.name }} state=absent uid={{ item.id }} groups={{ item.name }},motu append=yes
+  with_items: dead_users
+
+- name: Delete dead user groups
+  group: name={{ item.name }} state=absent gid={{ item.id }}
+  with_items: dead_users
+
+- name: Update sudoers
+  copy: src=sudoers dest=/etc/sudoers owner=root group=root mode=0440

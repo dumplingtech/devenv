@@ -1,0 +1,45 @@
+---
+
+- name: Create Route53 health check entry
+  delegate_to: 127.0.0.1
+  become: False
+  route53_health_check:
+    state: present
+    ip_address: "{{ inventory_hostname }}"
+    type: HTTP
+    resource_path: /healthcheck
+    request_interval: 30
+    failure_threshold: 2
+  register: my_health_check
+
+- name: Create Route53 external weighted DNS group
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ external_domain }}"
+    type: A
+    overwrite: yes
+    record: "{{ ansible_default_ipv4.address.split('.')[1] }}.{{ external_domain }}"
+    value: "{{ inventory_hostname }}"
+    ttl: 30
+    # Routing policy
+    identifier: "{{ hostvars[inventory_hostname]['ec2_tag_Name'] }}"
+    weight: 100
+    health_check: "{{ my_health_check.health_check.id }}"
+
+- name: Create Route53 internal weighted DNS group
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ internal_domain }}"
+    type: A
+    overwrite: yes
+    record: "i-{{ ansible_default_ipv4.address.split('.')[1] }}.{{ internal_domain }}"
+    value: "{{ ansible_default_ipv4.address }}"
+    ttl: 30
+    # Routing policy
+    identifier: "{{ hostvars[inventory_hostname]['ec2_tag_Name'] }}"
+    weight: 100
+    health_check: "{{ my_health_check.health_check.id }}"

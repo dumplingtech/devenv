@@ -1,0 +1,17 @@
+---
+
+- name: Start etcd-register container
+  docker:
+    name: etcd-register
+    restart_policy: on-failure
+    restart_policy_retry: 5
+    image: "{{ registry_server }}/etcd-register:latest"
+    state: reloaded
+    pull: always
+    tty: True
+    net: bridge
+    env:
+      ETCD_HOST: "{{ ansible_default_ipv4.address }}:4001"
+      HOST_IP: "{{ ansible_default_ipv4.address }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

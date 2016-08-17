@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+ANSIBLE_PATH=/etc/ansible
+OLD_VAULT_PASS=/home/ansible/.vault_pass
+OLD_VAULT_KEY=$(cat ${OLD_VAULT_PASS})
+
+read -p "New vault key: " VAULT_KEY
+NEW_VAULT_PASS=$(mktemp)
+echo $VAULT_KEY > $NEW_VAULT_PASS
+
+for file in $(find $ANSIBLE_PATH -type f -iname "main.yml" | grep vars); do
+    echo "Rekeying $file"
+    ansible-vault decrypt --vault-password-file $OLD_VAULT_PASS $file
+    ansible-vault encrypt --vault-password-file $NEW_VAULT_PASS $file
+done
+
+for file in $(find $ANSIBLE_PATH -type f -iname "*.enc"); do
+    echo "Rekeying $file"
+    openssl aes-256-cbc -salt -a -d -in $file -out ${file}.dec -k $OLD_VAULT_KEY
+    openssl aes-256-cbc -salt -a -e -in ${file}.dec -out $file -k $NEW_VAULT_KEY
+    rm -f ${file}.dec
+done
+
+echo "Okay!"

@@ -1,0 +1,18 @@
+#!/bin/bash -xe
+
+vault_pass_file=/home/ansible/.vault_pass
+if [ -f ${vault_pass_file} ]; then
+    ansible-playbook \
+        -i /etc/ansible/local_hosts \
+        --vault-password-file=${vault_pass_file} \
+        /etc/ansible/plays/local.yml
+else
+    ansible-playbook \
+        -i /etc/ansible/local_hosts \
+        --ask-vault-pass \
+        /etc/ansible/plays/local.yml
+fi
+
+source /home/ansible/.bash_profile
+echo 'PS1="\[\033[34m\][ansible]\[\033[m\]> "' >> /home/ansible/.bash_profile
+su -s /bin/bash - ansible

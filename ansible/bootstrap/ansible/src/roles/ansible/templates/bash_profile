@@ -1,0 +1,25 @@
+export ANSIBLE_LIBRARY=/etc/ansible/modules/
+export AWS_ACCESS_KEY_ID={{ aws_access_key_id }}
+export AWS_SECRET_ACCESS_KEY={{ aws_secret_access_key }}
+export SLACK_TOKEN={{ slack_token }}
+export SLACK_CHANNEL={{ slack_channel }}
+
+alias decrypt="ansible-vault decrypt --vault-password-file=/home/ansible/.vault_pass $@"
+alias encrypt="ansible-vault encrypt --vault-password-file=/home/ansible/.vault_pass $@"
+alias view="ansible-vault view --vault-password-file=/home/ansible/.vault_pass $@"
+
+function play() {
+    [ $# -lt 1 ] && {
+        echo "usage: play <playbook>"
+        return 1
+    }
+  
+    echo "**** Running Playbook $@ ****"
+    ansible-playbook --vault-password-file /home/ansible/.vault_pass $@
+}
+
+function dump-hostvars() {
+    ansible -m debug -a "var=hostvars['$1']" localhost
+}
+
+cd /etc/ansible/plays/

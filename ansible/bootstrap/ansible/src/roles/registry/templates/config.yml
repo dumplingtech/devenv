@@ -1,0 +1,23 @@
+version: 0.1
+storage:
+  s3:
+    accesskey: {{ aws_ops_access_key_id }}
+    secretkey: {{ aws_ops_secret_access_key }}
+    region: {{ aws_ops_bucket_region }}
+    bucket: {{ aws_ops_bucket_name }}
+    encrypt: false
+    secure: false
+    v4auth: true
+    chunksize: 5242880
+    rootdirectory: /registry
+  delete:
+    enabled: true
+  cache:
+    blobdescriptor: inmemory
+http:
+  addr: :443
+  headers:
+     X-Content-Type-Options: [nosniff]
+  tls:
+    certificate: /certs/domain.crt
+    key: /certs/domain.key

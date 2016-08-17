@@ -1,0 +1,45 @@
+---
+
+- name: Provision spot EC2 instances
+  ec2:
+    keypair: ansible
+    spot_wait_timeout: 660
+    spot_price: "{{ spot_prices[item.ec2_os][item.ec2_type | regex_replace('\\.','_')][item.zone[:-1] | regex_replace('-','_')] }}"
+    region: "{{ item.zone[:-1] }}"
+    image: "{{ item.ec2_image }}"
+    group: "{{ item.ec2_security_groups }}"
+    instance_type: "{{ item.ec2_type }}"
+    vpc_subnet_id: "{{ lookup('aws_subnet', item.zone, env) }}"
+    instance_tags: "{{ item.ec2_tags }}"
+    wait: yes
+    assign_public_ip: no
+    source_dest_check: no
+    exact_count: "{{ item.ec2_count }}"
+    count_tag: "{{ item.ec2_tags }}"
+    volumes:
+      - device_name: /dev/sda1
+        volume_size: "{{ item.ec2_ebs_size }}"
+        device_type: gp2
+        delete_on_termination: true
+  async: 666
+  poll: 0
+  with_items: "{{ instances[env] }}"
+  register: async_results
+
+- name: Wait for instances to launch
+  async_status:
+    jid: "{{item.ansible_job_id}}"
+  with_items: async_results.results
+  register: async_poll_results
+  until: async_poll_results.finished
+  retries: 600
+
+- set_fact: eips="[]"
+
+- name: Assign elastic IP address to all instances
+  set_fact: eips="{{ eips }} + {{ lookup('aws_eips', item.name, env, external_domain).split(',') }}"
+  with_items: "{{ regions }}"
+
+- name: Wait for external access to all instances
+  wait_for: host={{ item }} port=22 delay=10 timeout=360 state=started
+  with_items: "{{ eips }}"

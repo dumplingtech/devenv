@@ -1,0 +1,20 @@
+---
+
+- name: Install SNMPD packages
+  apt:
+    name: '{{ item }}'
+    state: 'latest'
+    install_recommends: False
+  with_items: [ 'snmp', 'snmpd' ]
+
+- name: Add SNMPD default configs
+  copy: src=etc/default/snmpd dest=/etc/default/snmpd
+
+- name: Customize SNMPD configs
+  template:
+    src: 'etc/snmp/snmpd.conf'
+    dest: '/etc/snmp/snmpd.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: [ 'Restart SNMPD' ]

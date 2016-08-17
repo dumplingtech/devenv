@@ -1,0 +1,75 @@
+---
+
+- name: Create Route53 external latency DNS group
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ external_domain }}"
+    type: CNAME
+    overwrite: yes
+    record: "services.{{ external_domain }}"
+    value: "{{ item.id }}.{{ external_domain }}"
+    ttl: 300
+    # Routing policy
+    identifier: "{{ item.name }}"
+    region: "{{ item.name }}"
+  with_items: "{{ regions }}"
+
+- name: Create Route53 internal latency DNS group
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ internal_domain }}"
+    type: CNAME
+    overwrite: yes
+    record: "i-services.{{ internal_domain }}"
+    value: "i-{{ item.id }}.{{ internal_domain }}"
+    ttl: 300
+    # Routing policy
+    identifier: "{{ item.name }}"
+    region: "{{ item.name }}"
+  with_items: "{{ regions }}"
+
+- name: Create Route53 DNS entry for Docker registry server
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ internal_domain }}"
+    type: CNAME
+    overwrite: yes
+    record: "{{ registry_server }}"
+    value: "i-services.{{ internal_domain }}"
+    ttl: 300
+
+- name: Create Route53 DNS entries for external services
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ internal_domain }}"
+    type: CNAME
+    overwrite: yes
+    record: "{{ item }}.{{ internal_domain }}"
+    value: "services.{{ internal_domain }}"
+    ttl: 300
+  with_items:
+    - "jenkins"
+    - "dev"
+
+# todo: add apex domain name as well (i.e. brickly.io)
+- name: Create Route53 DNS entries for production services
+  delegate_to: 127.0.0.1
+  become: False
+  route53:
+    command: create
+    zone: "{{ external_domain }}"
+    type: CNAME
+    overwrite: yes
+    record: "{{ item }}.{{ external_domain }}"
+    value: "services.{{ external_domain }}"
+    ttl: 300
+  with_items:
+    - "www"

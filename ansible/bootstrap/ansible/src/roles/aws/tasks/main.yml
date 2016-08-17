@@ -1,0 +1,10 @@
+---
+
+- include: add_keys.yml
+
+- include: create_vpcs.yml 
+
+- include: create_security_groups.yml
+  with_items: "{{ regions }}"
+
+- include: launch_ec2s.yml env="ops"

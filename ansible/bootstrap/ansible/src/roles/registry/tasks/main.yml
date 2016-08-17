@@ -1,0 +1,37 @@
+---
+
+- name: Create certificate directory
+  file: path={{ item }} state=directory
+  with_items:
+    - /local/registry/certs
+    - /local/registry/docker
+
+- name: Copy domain certificate
+  copy:
+    content: "{{ internal_domain_crt }}"
+    dest: /local/registry/certs/domain.crt
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Copy domain private key
+  copy:
+    content: "{{ internal_domain_key }}"
+    dest: /local/registry/certs/domain.key
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Create registry configuration file
+  template:
+    src: 'config.yml'
+    dest: '/local/registry/docker/registry-config.yml'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify: [ 'Restart registry' ]
+
+- name: Deploy registry container
+  debug: msg="Starting registry container in {{ ansible_default_ipv4.address }}"
+  notify: [ 'Start registry' ]
+  changed_when: true

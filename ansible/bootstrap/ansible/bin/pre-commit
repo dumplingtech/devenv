@@ -1,0 +1,25 @@
+#!/bin/bash -e
+
+failures=0
+
+function check_file() {
+    if ! $(head -1 $1 | grep ANSIBLE_VAULT &> /dev/null); then
+        echo 1
+    fi
+}
+
+for file in $(git diff --cached --name-only --diff-filter=ACMR); do
+    dir=$(dirname ${file} | tr '/' '\n' | tail -1)
+    if [ $dir == "vars" ] || [ $dir == "group_vars" ]; then
+        echo -e "\e[0;36mchecking var_file ${file}\e[0m"
+        if [ ! -z "$(check_file ${file})" ]; then
+            echo -e "\e[0;31mvar_file ${file} unencrypted\e[0m"
+            let failures++
+        fi
+    fi
+done
+
+if [ "$failures" -ne 0 ]; then
+    echo -e "\e[0;31mError: $failures checks failed. Aborting commit.\e[0m"
+    exit 1
+fi

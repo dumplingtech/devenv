@@ -1,0 +1,137 @@
+---
+
+vault_pass: My_Secret_Vault_Password
+service_pass: My_Secret_Service_Password
+
+ansible_private_key_file: /home/ansible/.ssh/id_rsa
+
+alert_url: https://hooks.slack.com/services/ABC123/DEF456/GHI789
+
+aws_ops_access_key_id: AWS_ACCESS_KEY_ID
+aws_ops_secret_access_key: AWS_SECRET_ACCESS_KEY
+aws_ops_bucket_name: inme-ops
+aws_ops_bucket_region: us-west-2
+
+
+external_domain: inme.io
+external_domain_crt: |
+            -----BEGIN CERTIFICATE-----
+            MIIDcjCCAloCCQCUrq+DMG0CgTANBgkqhkiG9w0BAQsFADB7MQswCQYDVQQGEwJV
+            UzETMBEGA1UECAwKQ2FsaWZvcm5pYTEWMBQGA1UEBwwNU2FuIEZyYW5jaXNjbzEW
+            MBQGA1UECgwNSW5tZS5pbywgSW5jLjETMBEGA1UECwwKT3BlcmF0aW9uczESMBAG
+            A1UEAwwJKi5pbm1lLmlvMB4XDTE2MDgxNzIwMzU0NloXDTE3MDgxNzIwMzU0Nlow
+            ezELMAkGA1UEBhMCVVMxEzARBgNVBAgMCkNhbGlmb3JuaWExFjAUBgNVBAcMDVNh
+            biBGcmFuY2lzY28xFjAUBgNVBAoMDUlubWUuaW8sIEluYy4xEzARBgNVBAsMCk9w
+            ZXJhdGlvbnMxEjAQBgNVBAMMCSouaW5tZS5pbzCCASIwDQYJKoZIhvcNAQEBBQAD
+            ggEPADCCAQoCggEBANKf8QFSy34floO50UqjFE6lqF4T18cKKSYcvIi6ZPZBvyci
+            8KEkA203z+qpk5nrFVE8IUFmIx7DCTqVVKUVUL+5QvGrSspwyoCOm4eRPjemipgX
+            od/roBxbAVdp46EsXa49IAVTXEuFDGV/O3f45Xy46Hk1vw4x28utAp79L8hC6ov8
+            /VnujP5PcwyJ9aNo+aLAmf+bhVDinR3ssdd8NKvd+mX+xzv/mRzfK+TWgy56Ftu+
+            23sv1kZkPV5His74tK2lt7O+lo66wMg3ZmnmiRsYvjbadAeuTHFuJJH8p2h56MjF
+            5LntV9uq6gFq/Jy+ozXDaOIrDVF2+Na2evAZvJkCAwEAATANBgkqhkiG9w0BAQsF
+            AAOCAQEAvhVD2Shs/fAx7H+n0U7o/46VwyDzw9LuhGFEruGzRQQuWhV5z4DE39TC
+            3LFDLeQ63T+S49Nt/TrXbm8t4DDzqVi+T9/xKfjtX2YNGoKF92kxJcaGDtNKCVdd
+            Q0xEGbhKOYajEWrmvrbCoM6HUfc7z3L2qvmFfU4vnIBwtQ+roP65sy78dzia3bih
+            aiGdXvNjcu3+vdwBvw5tRvjVwYsuFLUeD1Sr8DltUJivo8NH9u6GvvOCF73oXd09
+            ZCMDwCl0iVjOJoCXSFp4fx6+Y4gd/ItS+q0CMPWOU+fJoFKn/zYFoRII6eU4xx7P
+            B4a6G0a6VurnlhWBYDfAqp6L+pcPrQ==
+            -----END CERTIFICATE-----
+external_domain_tcr: |
+            -----BEGIN CERTIFICATE-----
+            MIIENjCCAx6gAwIBAgIBATANBgkqhkiG9w0BAQUFADBvMQswCQYDVQQGEwJTRTEU
+            MBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFkZFRydXN0IEV4dGVybmFs
+            IFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBFeHRlcm5hbCBDQSBSb290
+            MB4XDTAwMDUzMDEwNDgzOFoXDTIwMDUzMDEwNDgzOFowbzELMAkGA1UEBhMCU0Ux
+            FDASBgNVBAoTC0FkZFRydXN0IEFCMSYwJAYDVQQLEx1BZGRUcnVzdCBFeHRlcm5h
+            bCBUVFAgTmV0d29yazEiMCAGA1UEAxMZQWRkVHJ1c3QgRXh0ZXJuYWwgQ0EgUm9v
+            dDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALf3GjPm8gAELTngTlvt
+            H7xsD821+iO2zt6bETOXpClMfZOfvUq8k+0DGuOPz+VtUFrWlymUWoCwSXrbLpX9
+            uMq/NzgtHj6RQa1wVsfwTz/oMp50ysiQVOnGXw94nZpAPA6sYapeFI+eh6FqUNzX
+            mk6vBbOmcZSccbNQYArHE504B4YCqOmoaSYYkKtMsE8jqzpPhNjfzp/haW+710LX
+            a0Tkx63ubUFfclpxCDezeWWkWaCUN/cALw3CknLa0Dhy2xSoRcRdKn23tNbE7qzN
+            E0S3ySvdQwAl+mG5aWpYIxG3pzOPVnVZ9c0p10a3CitlttNCbxWyuHv77+ldU9U0
+            WicCAwEAAaOB3DCB2TAdBgNVHQ4EFgQUrb2YejS0Jvf6xCZU7wO94CTLVBowCwYD
+            VR0PBAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wgZkGA1UdIwSBkTCBjoAUrb2YejS0
+            Jvf6xCZU7wO94CTLVBqhc6RxMG8xCzAJBgNVBAYTAlNFMRQwEgYDVQQKEwtBZGRU
+            cnVzdCBBQjEmMCQGA1UECxMdQWRkVHJ1c3QgRXh0ZXJuYWwgVFRQIE5ldHdvcmsx
+            IjAgBgNVBAMTGUFkZFRydXN0IEV4dGVybmFsIENBIFJvb3SCAQEwDQYJKoZIhvcN
+            AQEFBQADggEBALCb4IUlwtYj4g+WBpKdQZic2YR5gdkeWxQHIzZlj7DYd7usQWxH
+            YINRsPkyPef89iYTx4AWpb9a/IfPeHmJIZriTAcKhjW88t5RxNKWt9x+Tu5w/Rw5
+            6wwCURQtjr0W4MHfRnXnJK3s9EK0hZNwEGe6nQY1ShjTK3rMUUKhemPR5ruhxSvC
+            Nr4TDea9Y355e6cJDUCrat2PisP29owaQgVR1EX1n6diIWgVIEM8med8vSTYqZEX
+            c4g/VhsxOBi0cQ+azcgOno4uG+GMmIPLHzHxREzGBHNJdmAPx/i9F4BrLunMTA5a
+            mnkPIAou1Z5jJh5VkpTYghdae9C8x49OhgQ=
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            MIIFdDCCBFygAwIBAgIQJ2buVutJ846r13Ci/ITeIjANBgkqhkiG9w0BAQwFADBv
+            MQswCQYDVQQGEwJTRTEUMBIGA1UEChMLQWRkVHJ1c3QgQUIxJjAkBgNVBAsTHUFk
+            ZFRydXN0IEV4dGVybmFsIFRUUCBOZXR3b3JrMSIwIAYDVQQDExlBZGRUcnVzdCBF
+            eHRlcm5hbCBDQSBSb290MB4XDTAwMDUzMDEwNDgzOFoXDTIwMDUzMDEwNDgzOFow
+            gYUxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAO
+            BgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMSswKQYD
+            VQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MIICIjANBgkq
+            hkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAkehUktIKVrGsDSTdxc9EZ3SZKzejfSNw
+            AHG8U9/E+ioSj0t/EFa9n3Byt2F/yUsPF6c947AEYe7/EZfH9IY+Cvo+XPmT5jR6
+            2RRr55yzhaCCenavcZDX7P0N+pxs+t+wgvQUfvm+xKYvT3+Zf7X8Z0NyvQwA1onr
+            ayzT7Y+YHBSrfuXjbvzYqOSSJNpDa2K4Vf3qwbxstovzDo2a5JtsaZn4eEgwRdWt
+            4Q08RWD8MpZRJ7xnw8outmvqRsfHIKCxH2XeSAi6pE6p8oNGN4Tr6MyBSENnTnIq
+            m1y9TBsoilwie7SrmNnu4FGDwwlGTm0+mfqVF9p8M1dBPI1R7Qu2XK8sYxrfV8g/
+            vOldxJuvRZnio1oktLqpVj3Pb6r/SVi+8Kj/9Lit6Tf7urj0Czr56ENCHonYhMsT
+            8dm74YlguIwoVqwUHZwK53Hrzw7dPamWoUi9PPevtQ0iTMARgexWO/bTouJbt7IE
+            IlKVgJNp6I5MZfGRAy1wdALqi2cVKWlSArvX31BqVUa/oKMoYX9w0MOiqiwhqkfO
+            KJwGRXa/ghgntNWutMtQ5mv0TIZxMOmm3xaG4Nj/QN370EKIf6MzOi5cHkERgWPO
+            GHFrK+ymircxXDpqR+DDeVnWIBqv8mqYqnK8V0rSS527EPywTEHl7R09XiidnMy/
+            s1Hap0flhFMCAwEAAaOB9DCB8TAfBgNVHSMEGDAWgBStvZh6NLQm9/rEJlTvA73g
+            JMtUGjAdBgNVHQ4EFgQUu69+Aj36pvE8hI6t7jiY7NkyMtQwDgYDVR0PAQH/BAQD
+            AgGGMA8GA1UdEwEB/wQFMAMBAf8wEQYDVR0gBAowCDAGBgRVHSAAMEQGA1UdHwQ9
+            MDswOaA3oDWGM2h0dHA6Ly9jcmwudXNlcnRydXN0LmNvbS9BZGRUcnVzdEV4dGVy
+            bmFsQ0FSb290LmNybDA1BggrBgEFBQcBAQQpMCcwJQYIKwYBBQUHMAGGGWh0dHA6
+            Ly9vY3NwLnVzZXJ0cnVzdC5jb20wDQYJKoZIhvcNAQEMBQADggEBAGS/g/FfmoXQ
+            zbihKVcN6Fr30ek+8nYEbvFScLsePP9NDXRqzIGCJdPDoCpdTPW6i6FtxFQJdcfj
+            Jw5dhHk3QBN39bSsHNA7qxcS1u80GH4r6XnTq1dFDK8o+tDb5VCViLvfhVdpfZLY
+            Uspzgb8c8+a4bmYRBbMelC1/kZWSWfFMzqORcUx8Rww7Cxn2obFshj5cqsQugsv5
+            B5a6SE2Q8pTIqXOi6wZ7I53eovNNVZ96YUWYGGjHXkBrI/V5eu+MtWuLt29G9Hvx
+            PUsE2JOAWVrgQSQdso8VYFhH2+9uRv0V9dlfmrPb2LjkQLPNlzmuhbsdjrzch5vR
+            pu/xO28QOG8=
+            -----END CERTIFICATE-----
+external_domain_key: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIIEwAIBADANBgkqhkiG9w0BAQEFAASCBKowggSmAgEAAoIBAQDSn/EBUst+H5aD
+            udFKoxROpaheE9fHCikmHLyIumT2Qb8nIvChJANtN8/qqZOZ6xVRPCFBZiMewwk6
+            lVSlFVC/uULxq0rKcMqAjpuHkT43poqYF6Hf66AcWwFXaeOhLF2uPSAFU1xLhQxl
+            fzt3+OV8uOh5Nb8OMdvLrQKe/S/IQuqL/P1Z7oz+T3MMifWjaPmiwJn/m4VQ4p0d
+            7LHXfDSr3fpl/sc7/5kc3yvk1oMuehbbvtt7L9ZGZD1eR4rO+LStpbezvpaOusDI
+            N2Zp5okbGL422nQHrkxxbiSR/KdoeejIxeS57VfbquoBavycvqM1w2jiKw1RdvjW
+            tnrwGbyZAgMBAAECggEBAIxr/7S/K1YZ3zJRNzzIfuh0P00Bc7GKj6aOMBAEHP2l
+            FbkU7VKxfOta825iwjoy5dJ0AUPlwXJn24ZIOteY324DKKOQbNuM2SVebkiyx8U4
+            blw6HTz5jZR6A+nwecdhmc9phyily/m5aWtdqRsyQGWnra3p7EedbAldfkrbR/j9
+            laieCAxmCVDXJlI9NnEGWyN/kr+Sg2bLeRPze3c2MIdQjBs6ik3vSc9WMAW1p5l3
+            4f6rxOa8B70d1qE29JdF9auQTwZOOd1raJVVXfSBH+EHJZ66ZOVxTs++UR8FpaQ9
+            cISzPM24dLdC8ZZ5t24BtWXQJdThpo+5XlkL/uYMJyUCgYEA+Foxin3kB9JGhFFO
+            B2Wgw6wWnEGO+JLa8FvccdPp8MuJRiVAqeZ4rqdgyL7/mJhzKXtC8Q7JdMUuxRBy
+            l0PC3YC98RCbEn2dD3x7XsA2KMVyh3YY2SiLh58Fx6HKjxxdmw7fD4svvSxNwFio
+            Q73aDSZVZbiAuel6e6d6lK6X/p8CgYEA2RxVtPh+AQWGwsTAf+hvLm98RX9Zg7qw
+            6KKb1vr3ZmIaUOtvz5rglB28l0JIAxOB/P/wlvhJEjISr6j+08NNP3Cx4X3ZplIt
+            5JHrpRQ6zN3vz8ZaAdn5CILnweZOk+mXB2knTYuocdHYs7I+otGcD3H82L4zkl2Q
+            PI5+lO0N0ccCgYEA73hAltLHAwet+T5Qp+9FsgeIkcjhLCymsedRy+xTgl0wE5Qu
+            IuVZbsd0Gn2ZBbHSMahqJvhkJpVPgLNYWyT6jAzsmbqyXIUE4f7dEsLyNiQVSCsG
+            0LY4vGAI+bK3F4F5fN89FMbYFGfY3ORf81noHI/e/kOG1D0eXodiOmWTp+8CgYEA
+            rza4zHYGapilKyZSHGfe4mDCr+uYuEDAaN5iWlrrskrV5hw7fhYFzEM7Ye7x4tmp
+            fB6pcY0qm26hufXuwcPJ4br3M323WwzTULWasPzkf1VVJh9zoC7jVcUfeFJ/c8t+
+            QVLRjzl4VXL/KfZdqlTzV1usrNbDFApCTzzIVzQAhR0CgYEApzyxngz1D8DLosWy
+            bx9aXbV1o4NbI7NE75jujS6QjKQP+nP3OIyAOSQq7bLvaYfBbGKpcNxdBaHqx5+z
+            GWJalFod6n0MbTyJKyM0plYNsTXVeQw9ZJINT9uuYbrgKItnT3uXX7JuRcnivfxm
+            nhj8IaB3pT5xHAKOi5jboKOVv1I=
+            -----END PRIVATE KEY-----
+
+# todo: use a different domain internally, and obtain wild-card certificate for 
+internal_domain: "{{ external_domain }}"
+internal_domain_crt: "{{ external_domain_crt }}"
+internal_domain_tcr: "{{ external_domain_tcr }}"
+internal_domain_key: "{{ external_domain_key }}"
+
+registry_server: "i-docker.{{ internal_domain }}"
+
+regions:
+#  - { name: "us-west-1", id: 1 }
+  - { name: "us-west-2", id: 2 }

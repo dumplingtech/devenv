@@ -1,0 +1,160 @@
+---
+- name: Install nginx package
+  apt:
+    pkg: nginx
+    state: latest
+
+- name: Copy over custom nginx binary
+  docker:
+    name: nginx-install
+    image: "{{ registry_server }}/nginx:latest"
+    state: restarted
+    pull: always
+    command: cp -fv /usr/sbin/nginx /target/nginx.custom
+    volumes:
+      - /usr/sbin:/target
+
+- name: Get current nginx checksum
+  stat: path=/usr/sbin/nginx
+  register: nginx_stat
+
+- name: Get custom nginx checksum
+  stat: path=/usr/sbin/nginx.custom
+  register: nginx_custom_stat
+
+- name: Install custom nginx binary
+  command: mv /usr/sbin/nginx.custom /usr/sbin/nginx
+  notify:
+    - Test nginx config
+    - Restart nginx
+  when: nginx_stat['stat']['md5'] != nginx_custom_stat['stat']['md5']
+
+- name: Create nginx cache dir
+  file:
+    path: /var/cache/nginx
+    state: directory
+    owner: 'www-data'
+    group: 'www-data'
+    mode: '0755'
+
+- name: Add nginx config
+  template:
+    src: 'nginx.conf'
+    dest: '/etc/nginx/nginx.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify:
+    - Test nginx config
+    - Restart nginx
+
+- name: Create SSL key files for external domain
+  template:
+    src: 'external_domain/{{ item }}'
+    dest: '/etc/nginx/{{ external_domain }}.{{ item }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items:
+    - "ssl.crt"
+    - "ssl.tcr"
+    - "ssl.key"
+  notify:
+    - Test nginx config
+    - Restart nginx
+
+- name: Create SSL key files for internal domain
+  template:
+    src: 'internal_domain/{{ item }}'
+    dest: '/etc/nginx/{{ internal_domain }}.{{ item }}'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  with_items:
+    - "ssl.crt"
+    - "ssl.tcr"
+    - "ssl.key"
+  notify:
+    - Test nginx config
+    - Restart nginx
+
+- name: Create nginx loadbalancer config dir
+  file:
+    path: /etc/nginx/conf.d/lb
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: Add nginx http services config
+  template:
+    src: 'services.conf'
+    dest: '/etc/nginx/conf.d/lb/services.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify:
+    - Test nginx config
+    - Restart nginx
+
+- name: Add nginx tcp services config
+  template:
+    src: 'tcp_services.conf'
+    dest: '/etc/nginx/conf.d/lb/tcp_services.conf'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+  notify:
+    - Test nginx config
+    - Restart nginx
+
+- name: Add HtAuth user
+  htpasswd:
+    path: /etc/nginx/htpasswd
+    name: admin
+    password: "{{ service_pass }}"
+
+- name: Create confd dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: 'root'
+    group: 'root'
+    mode: '0755'
+  with_items:
+    - /etc/confd/templates
+    - /etc/confd/conf.d
+
+- name: Add service template
+  template: 
+    src: 'haproxy.tmpl'
+    dest: '/etc/confd/templates/haproxy.tmpl'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: Add service config
+  template: 
+    src: 'services.toml'
+    dest: '/etc/confd/conf.d/services.toml'
+    owner: 'root'
+    group: 'root'
+    mode: '0644'
+
+- name: Start nginx service
+  service: name=nginx state=started
+
+- name: Start confd-haproxy container
+  docker:
+    privileged: True
+    name: confd-haproxy
+    restart_policy: on-failure
+    restart_policy_retry: 5
+    image: "{{ registry_server }}/confd-haproxy:latest"
+    state: reloaded
+    pull: always
+    net: host
+    env:
+      ETCD_HOST: "{{ ansible_default_ipv4.address }}:4001"
+    volumes:
+      - /etc/confd:/etc/confd

@@ -1,0 +1,80 @@
+---
+
+- name: Launch AWS instances
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  roles:
+    - aws
+
+- name: Prepare Linux instances
+  hosts: tag_env_ops
+  gather_facts: False 
+  remote_user: ubuntu
+  become: True
+  tasks: 
+    - name: Install Python 2.7
+      raw: |
+        version=$(/usr/bin/python --version 2>&1 /dev/stdout | awk {'$2'} |awk -F'.' {'print $1 "." $2'})
+        if [ x$version != "x2.7" ]; then
+            apt-get update -qq
+            apt-get install -yqq python2.7
+            ln -sf /usr/bin/python2.7 /usr/bin/python
+        fi
+
+- name: Bootstrap ops instances
+  hosts: tag_env_ops
+  remote_user: ubuntu
+  become: True
+  pre_tasks:
+    - name: Check bootstrapped file
+      stat: path=/.bootstrapped
+      ignore_errors: true
+      register: bootstrapped
+    - apt: update_cache=yes cache_valid_time=21600
+      when: bootstrapped.stat.exists == false
+  roles:
+    - { role: base, when: "bootstrapped.stat.exists == false" }
+    - { role: fstab, when: "bootstrapped.stat.exists == false" }
+    - { role: docker, when: "bootstrapped.stat.exists == false" }
+    - { role: snmpd, when: "bootstrapped.stat.exists == false" }
+    - { role: dnsmasq, when: "bootstrapped.stat.exists == false" }
+  post_tasks:
+    - name: Create bootstrapped file
+      copy:
+        content: "{{ ansible_date_time.iso8601_micro }}"
+        dest: /.bootstrapped
+      when: bootstrapped.stat.exists == false
+
+- name: Launch Docker registry service
+  hosts: tag_registry_yes
+  become: True
+  roles:
+    - { role: registry, tags: ['registry'] }
+  serial: 1
+
+- name: Launch etcd cluster membership service
+  hosts: tag_env_ops
+  become: True
+  roles:
+    - { role: etcd, tags: ['etcd'] }
+    - { role: etcd-register, tags: ['etcd'] }
+
+- name: Launch haproxy load balancer
+  hosts: tag_lb_yes
+  become: True
+  roles:
+    - { role: confd-haproxy, tags: ['loadbalancer'] }
+
+- name: Configure DNS load balancing service
+  hosts: tag_lb_yes
+  roles:
+    - { role: loadbalancer, tags: ['loadbalancer'] }
+  serial: 1
+
+- name: Create latency based DNS entries
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - { include: ../roles/loadbalancer/tasks/update_route53.yml, tags: ['loadbalancer'] }
