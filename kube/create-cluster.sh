@@ -3,7 +3,7 @@
 export KUBE_VERSION='v1.3.5'
 export KUBERNETES_PROVIDER=aws
 export KUBE_AWS_ZONE=us-west-2a
-export NUM_NODES=2
+export NUM_NODES=1
 export MASTER_SIZE=t2.micro
 export NODE_SIZE=t2.micro
 #export AWS_S3_REGION=us-west-1
