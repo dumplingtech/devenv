@@ -1,0 +1,9 @@
+---
+
+# The following help expose a docker port or to add additional options when
+# running docker daemon.  The default is to not use any special options.
+docker_opts: "--userland-proxy=false --dns {{ ansible_default_ipv4.address }} -s aufs -H tcp://{{ ansible_default_ipv4.address }}:4243 -H unix:///var/run/docker.sock"
+
+apt_key_url: hkp://p80.pool.sks-keyservers.net:80
+apt_key_sig: 58118E89F3A912897C070ADBF76221572C52609D
+apt_repository: deb https://apt.dockerproject.org/repo ubuntu-xenial main

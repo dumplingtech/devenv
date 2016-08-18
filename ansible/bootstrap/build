@@ -1,0 +1,60 @@
+#!/bin/bash -e
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -f|--force)
+            force=yes ;;
+        -p|--push)
+            push=yes ;;
+        *)
+            targets="$targets $1" ;;
+    esac
+    shift
+done
+
+modules="base python2 python3 etcd etcd-register nginx confd-haproxy ansible"
+
+dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# check commit hook is installed to prevent accidental commit of unencrypted config files
+if [ -z "$force" ] && [ ! -f ${dir}/.git/hooks/pre-commit ]; then
+    echo "Error: pre-commit hook not installed!"
+    echo "Please run ${dir}/ansible/bin/install-git-hook.sh"
+    exit 1
+fi
+
+has_target() {
+    if [ -z "$targets" ]; then
+        return 0
+    fi
+
+    for target in $targets; do
+        if [ $target == $1 ]; then
+            return 0;
+        fi
+    done
+
+    return 1
+}
+
+export $(grep 'image_prefix=' ${dir}/build.conf)
+
+for module in $modules; do
+    if has_target $module; then
+        echo "================ Building $module ================"
+        image_dir=${dir}/${module}
+        source ${dir}/build.conf
+        sed "s|__image_prefix__|${image_prefix}|g" ${image_dir}/Dockerfile > ${image_dir}/.Dockerfile
+        docker build --rm=true -f ${image_dir}/.Dockerfile -t ${image_name} ${image_dir}
+        rm -f ${image_dir}/.Dockerfile
+        echo "================ Finished $module ================"
+        echo ""
+
+        if [ ! -z "$push" ]; then
+            docker push ${image_prefix}/${module}:latest
+            prefix='{"text": "*'
+            suffix='* finished", "channel": "#devop", "username": "build-bot", "icon_emoji": ":package:"}'
+            curl -X POST --data-urlencode "payload=${prefix}${module}${suffix}" ${build_webhook}
+        fi
+    fi
+done

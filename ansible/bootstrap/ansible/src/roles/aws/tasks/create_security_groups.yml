@@ -1,0 +1,68 @@
+---
+
+- set_fact: region="{{ item.name }}"
+- set_fact: vpcs="{{ lookup('aws_vpcs', item.name).split(',') }}"
+
+- name: Create HTTP security group
+  ec2_group:
+    name: http
+    description: HTTP Security Group
+    region: "{{ region }}"
+    vpc_id: "{{ item }}"
+    rules:
+      - proto: tcp
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  with_items: "{{ vpcs }}"
+
+- name: Create HTTPS security group
+  ec2_group:
+    name: https
+    description: HTTPS Security Group
+    region: "{{ region }}"
+    vpc_id: "{{ item }}"
+    rules:
+      - proto: tcp
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  with_items: "{{ vpcs }}"
+
+- name: Create OpenVPN security group
+  ec2_group:
+    name: openvpn
+    description: OpenVPN Security Group
+    region: "{{ region }}"
+    vpc_id: "{{ item }}"
+    rules:
+      - proto: udp
+        from_port: 11940
+        to_port: 11960
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  with_items: "{{ vpcs }}"
+
+- name: Create SSH security group
+  ec2_group:
+    name: ssh
+    description: SSH Security Group
+    region: "{{ region }}"
+    vpc_id: "{{ item }}"
+    rules:
+      - proto: tcp
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+  with_items: "{{ vpcs }}"

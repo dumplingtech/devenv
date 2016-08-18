@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+image_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $(dirname ${image_dir})/build.conf
+
+# check if image is already running
+if /bin/$(docker inspect -f {{.State.Running}} ${image_short_name} 2> /dev/null) &> /dev/null; then
+    echo "$image_short_name already running"
+    exit 0
+fi
+
+# remove any stopped container
+if docker inspect ${image_short_name} &> /dev/null; then
+    docker rm ${image_short_name}
+fi
+
+docker run -it --name ${image_short_name} --rm -v ${image_dir}/src:/etc/ansible -u root --entrypoint main ${image_name}

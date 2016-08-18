@@ -1,0 +1,12 @@
+---
+
+- name: Copy over fstab script
+  copy:
+    src: fstab.sh
+    dest: /tmp/fstab.sh
+    owner: root
+    group: root
+    mode: 0555
+
+- name: Run fstab script
+  command: /tmp/fstab.sh creates=/local

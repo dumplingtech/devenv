@@ -1,0 +1,9 @@
+---
+
+- name: Add ansible deployment key to AWS
+  ec2_key:
+    name: ansible
+    region: "{{ item.name }}"
+    key_material: "{{ ansible_pub_key }}"
+    state: present
+  with_items: "{{ regions }}"

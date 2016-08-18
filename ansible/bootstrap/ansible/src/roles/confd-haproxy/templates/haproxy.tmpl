@@ -1,0 +1,110 @@
+global
+    daemon
+    user    haproxy
+    group   haproxy
+    maxconn 65536
+    log     127.0.0.1 local0
+    log     127.0.0.1 local1 notice
+    stats   socket /var/run/haproxy_stats.sock mode 666 level admin
+
+defaults
+    log     global
+    option  dontlognull
+    maxconn 1200
+    retries 15
+    timeout connect 5s
+    timeout client  1m
+    timeout server  1m
+    option  redispatch
+    balance roundrobin
+
+listen stats :3212
+    mode http
+    stats enable
+    stats uri /
+    stats refresh 10s
+    stats auth admin:{{ service_pass }}
+
+{% raw %}
+
+{{ if exists "/services/external-www" }}
+frontend external_www
+    mode http
+    bind 0.0.0.0:7100
+    default_backend external_www
+backend external_www
+    mode http
+    cookie SRVID insert indirect nocache maxidle 60m
+    {{ range gets "/backends/external-www/*" }}
+    {{ $data := .Value }}
+    server {{ $data }}_container {{ $data }} cookie {{ $data }} check inter 2s rise 2 fall 2 
+    {{ end }}
+{{ end }}
+
+{{ if exists "/services/internal-www" }}
+frontend internal_www
+    mode http
+    bind 0.0.0.0:7101
+    default_backend internal_www
+backend internal_www
+    mode http
+    cookie SRVID insert indirect nocache maxidle 60m
+    {{ range gets "/backends/internal-www/*" }}
+    {{ $data := .Value }}
+    server {{ $data }}_container {{ $data }} cookie {{ $data }} check inter 2s rise 2 fall 2 
+    {{ end }}
+{{ end }}
+
+{{ if exists "/services/jenkins" }}
+frontend jenkins
+    mode http
+    bind 0.0.0.0:7110
+    default_backend jenkins
+backend jenkins
+    mode http
+    {{ $data := getv "/services/jenkins" }}
+    server {{ $data }}_container {{ $data }} check inter 2s rise 2 fall 2 
+{{ end }}
+
+{{ if exists "/services/registry" }}
+frontend registry
+    mode http
+    bind 0.0.0.0:7111
+    default_backend registry
+backend registry
+    mode http
+    {{ range gets "/backends/registry/*" }}
+    {{ $data := .Value }}
+    server {{ $data }}_container {{ $data }} check inter 2s rise 2 fall 2 
+    {{ end }}
+{{ end }}
+
+{{ if exists "/services/external-db" }}
+frontend external_db
+    mode tcp
+    bind 0.0.0.0:7150
+    default_backend external_db
+backend external_db
+    option mysql-check user haproxy post-41
+    mode tcp
+    {{ range gets "/backends/external-db/*" }}
+    {{ $data := .Value }}
+    server {{ $data }}_container {{ $data }} check inter 2s rise 2 fall 2 
+    {{ end }}
+{{ end }}
+
+{{ if exists "/services/internal-db" }}
+frontend internal_db
+    mode tcp
+    bind 0.0.0.0:7151
+    default_backend internal_db
+backend internal_db
+    option mysql-check user haproxy post-41
+    mode tcp
+    {{ range gets "/backends/internal-db/*" }}
+    {{ $data := .Value }}
+    server {{ $data }}_container {{ $data }} check inter 2s rise 2 fall 2 
+    {{ end }}
+{{ end }}
+
+{% endraw %}

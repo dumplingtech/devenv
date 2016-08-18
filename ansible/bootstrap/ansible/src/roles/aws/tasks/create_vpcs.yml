@@ -1,0 +1,49 @@
+---
+
+- name: Create ops VPC in us-west-1
+  ec2_vpc:
+    state: present
+    cidr_block: 10.1.0.0/16
+    resource_tags: { "env":"ops" }
+    subnets:
+      - cidr: 10.1.0.0/24
+        az: us-west-1a
+        resource_tags: { "env":"ops" }
+      - cidr: 10.1.1.0/24
+        az: us-west-1c
+        resource_tags: { "env":"ops" }
+    internet_gateway: True
+    route_tables:
+      - subnets:
+          - 10.1.0.0/24
+          - 10.1.1.0/24
+        routes:
+          - dest: 0.0.0.0/0
+            gw: igw
+    region: us-west-1
+
+- name: Create dev VPC in us-west-2
+  ec2_vpc:
+    state: present
+    cidr_block: 10.2.0.0/16
+    resource_tags: { "env":"ops" }
+    subnets:
+      - cidr: 10.2.0.0/24
+        az: us-west-2a
+        resource_tags: { "env":"ops" }
+      - cidr: 10.2.1.0/24
+        az: us-west-2b
+        resource_tags: { "env":"ops" }
+      - cidr: 10.2.2.0/24
+        az: us-west-2c
+        resource_tags: { "env":"ops" }
+    internet_gateway: True
+    route_tables:
+      - subnets:
+          - 10.2.0.0/24
+          - 10.2.1.0/24
+          - 10.2.2.0/24
+        routes:
+          - dest: 0.0.0.0/0
+            gw: igw
+    region: us-west-2

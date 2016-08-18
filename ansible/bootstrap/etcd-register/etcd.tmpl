@@ -1,0 +1,89 @@
+#!/usr/bin/python
+
+import etcd
+import sys
+from urlparse import urlparse
+
+# ETCD_HOST parameter must be supplied via environment variable
+etcd_host = "{{ .Env.ETCD_HOST }}"
+if not etcd_host:
+    print "ETCD_HOST not set"
+    sys.exit(1)
+host = etcd_host
+
+# default etcd port is 4001, but allow ETCD_HOST to override that with <host>:<port> format
+port = 4001
+if ":" in etcd_host:
+    host, port = etcd_host.split(":")
+
+# create client connection to etcd server
+etcd_client = etcd.Client(host=host, port=int(port))
+
+# all services are always added to the /services directory
+try:
+    services = etcd_client.read("/services")
+except etcd.EtcdKeyNotFound:  # create /services dir if it does not exist
+    etcd_client.write("/services", None, dir=True)
+
+# multi-server services are added to the /backends directory
+try:
+    backends = etcd_client.read("/backends")
+except etcd.EtcdKeyNotFound:  # create /backends dir if it does not exist
+    etcd_client.write("/backends", None, dir=True)
+
+# go through every docker container looking for the following environment variables:
+#  - EXTERNAL_ROLE: if this is set, then added it to /services as a single server service
+#  - BACKEND_SERVICE: if this is set, then added it to /backends as a multi-server service
+
+{{ $local := . }}
+{{ range $key, $value := . }}
+
+  {{ if $value.Env.EXTERNAL_ROLE }}
+service = "{{ $value.Env.EXTERNAL_ROLE }}"
+
+    {{ if $value.Env.HOST_PORT }}
+value = "{{ $local.Env.HOST_IP }}:{{ $value.Env.HOST_PORT}}"
+    {{ else if ge (len $value.Addresses) 1 }}
+value = "{{ $local.Env.HOST_IP }}:{{ (index $value.Addresses 0).HostPort }}"
+    {{ else }}
+value = "{{ $local.Env.HOST_IP }}"
+    {{ end }}
+
+# only register this role if the existing service has disappeared
+path = '/services/' + service
+try:
+    if etcd_client.read(path).value == value:
+        etcd_client.write(path, value, ttl=20)
+except etcd.EtcdKeyNotFound:
+    etcd_client.write(path, value, ttl=20)
+    print('registered %s - %s' % (path, value))
+
+  {{ end }}
+
+  {{ if $value.Env.BACKEND_SERVICE }}
+service = "{{ $value.Env.BACKEND_SERVICE }}"
+
+    {{ if $value.Env.HOST_PORT }}
+hostPort = "{{ $value.Env.HOST_PORT }}"
+    {{ else if ge (len $value.Addresses) 1 }}
+hostPort = "{{ (index $value.Addresses 0).HostPort }}"
+    {{ else }}
+hostPort = None
+    {{ end }}
+
+if hostPort:
+
+    path = "/backends/" + service
+    try:
+        etcd_client.read(path)
+    except etcd.EtcdKeyNotFound:
+        etcd_client.write(path, None, dir=True)
+
+    path += "/" + "{{ printf "%.*s" 12 $value.ID }}"
+    etcd_client.write(path, "{{ $local.Env.HOST_IP }}:" + hostPort, ttl=30)
+    etcd_client.write('/services/' + service, '/backends/' + service, ttl=30)
+    print('registered %s - %s' % (path, "{{ $local.Env.HOST_IP }}:" + hostPort))
+
+  {{ end }}
+
+{{ end }}

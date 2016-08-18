@@ -1,0 +1,39 @@
+---
+
+- name: Restart registry
+  docker:
+    name: registry
+    image: registry:2
+    state: stopped
+  notify: Start registry
+
+- name: Start registry
+  docker:
+    name: registry
+    restart_policy: on-failure
+    restart_policy_retry: 5
+    image: registry:2
+    state: reloaded
+    pull: always
+    net: bridge
+    expose:
+      - 443
+    ports:
+      - "0.0.0.0:5000:443"
+    volumes:
+      - /local/registry/certs:/certs
+      - /local/registry/docker/registry-config.yml:/etc/docker/registry/config.yml
+    env:
+      BACKEND_SERVICE: "registry"
+  register: result
+  notify: Update etc hosts
+
+- name: Update etc hosts
+  lineinfile:
+    dest: /etc/hosts
+    regexp: "{{ registry_server }}"
+    line: "{{ docker_containers[0].NetworkSettings.IPAddress }} {{ registry_server }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: docker_containers[0].NetworkSettings.IPAddress is defined

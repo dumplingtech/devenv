@@ -1,0 +1,64 @@
+---
+
+- name: Set Docker daemon default options
+  copy:
+    content: "DOCKER_OPTS=\"{{ docker_opts.rstrip('\n') }}\""
+    dest: /etc/default/docker
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Reload docker
+  when: docker_opts != ""
+
+- name: Add Docker apt repository key
+  apt_key:
+    id: "{{ apt_key_sig }}"
+    keyserver: "{{ apt_key_url }}"
+    state: present
+
+- name: Add Docker apt repository
+  apt_repository:
+    repo: "{{ apt_repository }}"
+    state: present
+
+- name: Install packages
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - cgroup-bin
+    - "linux-image-extra-{{ ansible_kernel }}"
+    - linux-image-extra-virtual
+    - docker-engine
+
+- name: Install docker python package
+  pip: name=docker-py executable=pip2
+
+- name: Create certificate directories
+  file: path={{ item }} state=directory
+  with_items:
+    - /usr/local/share/ca-certificates
+    - "/etc/docker/certs.d/{{ registry_server }}"
+
+- name: Copy domain certificate
+  copy:
+    content: "{{ internal_domain_crt }}"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    - "/usr/local/share/ca-certificates/{{ registry_server }}"
+    - "/etc/docker/certs.d/{{ registry_server }}/ca.crt"
+
+- name: Start docker service
+  service:
+    name: docker
+    state: started
+
+- name: Install docker-gc
+  copy: src=docker-gc dest=/usr/local/sbin/docker-gc owner=root group=root mode=0755
+
+- name: Install docker-gc cron
+  copy: src=docker-gc.cron dest=/etc/cron.d/docker-gc owner=root group=root mode=0755

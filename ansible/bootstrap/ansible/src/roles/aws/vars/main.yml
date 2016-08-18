@@ -1,0 +1,138 @@
+---
+
+instances:
+  ops:
+
+    - zone: us-west-2a
+      ec2_os: linux
+      ec2_type: m4.large
+      ec2_image: ami-191fd379 # ubuntu 16.04 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 1
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone":"us-west-2a", "type":"m4-large", "env":"ops", "lb":"yes", "registry":"yes" }
+
+    - zone: us-west-2b
+      ec2_os: linux
+      ec2_type: m4.large
+      ec2_image: ami-191fd379 # ubuntu 16.04 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 1
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone":"us-west-2b", "type":"m4-large", "env":"ops", "lb":"yes", "registry":"yes" }
+
+    - zone: us-west-2c
+      ec2_os: linux
+      ec2_type: m4.large
+      ec2_image: ami-191fd379 # ubuntu 16.04 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 0
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone":"us-west-2c", "type":"m4-large", "env":"ops", "lb":"yes", "registry":"yes" }
+    - zone: us-west-2c
+      ec2_os: linux
+      ec2_type: r3.large
+      ec2_image: ami-191fd379 # ubuntu 16.04 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 1
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone":"us-west-2c", "type":"r3-large", "env":"ops", "lb":"yes", "registry":"yes" }
+
+    - zone: us-west-1a
+      ec2_os: linux
+      ec2_type: r3.large
+      ec2_image: ami-da2e5cba # ubuntu 15.10 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 0
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone": "us-west-1a", "type": "r3-large", "env":"ops" }
+    - zone: us-west-1a
+      ec2_os: linux
+      ec2_type: m3.large
+      ec2_image: ami-da2e5cba # ubuntu 15.10 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 0
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone": "us-west-1a", "type": "m3-large", "env":"ops" }
+    - zone: us-west-1c
+      ec2_os: linux
+      ec2_type: r3.xlarge
+      ec2_image: ami-da2e5cba # ubuntu 15.10 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 0
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone": "us-west-1c", "type": "r3-large", "env":"ops" }
+    - zone: us-west-1c
+      ec2_os: linux
+      ec2_type: m3.large
+      ec2_image: ami-da2e5cba # ubuntu 15.10 hvm:ebs-ssd
+      ec2_ebs_size: 64
+      ec2_count: 0
+      ec2_security_groups: [ default, ssh, http, https ]
+      ec2_tags: { "zone": "us-west-1c", "type": "m3-large", "env":"ops" }
+
+ansible_pub_key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDHG7x1xMaNlf+hihS3w2p2rhTsL45GP2SBTkOFB1b1N9lFl+eZGfpa9GVzSHlpklhcSN0CzDklsGpnPb53ebzJquIX7ZGjLj0EW7PATb4yvFeIy2JW3lYVYeVaWuQkru+lpBChVQsFA2JQKuHCXaXkX38vDKz9jfmEtyGkk4H/GitY77SnKN9HCV5yFtgDzvvmLW9w4+A1chMtqyEZVQegRDPfkLLl2of1JlgkDGrWM/hGKD4YgEc3ZGsuM9SCY9+IikzRYAmpWy6tNlU9iz8MBk8TwJ4Vb2idUL3eCPhhzehzzv+KBB1zNha9oFSAoS40yD430HMJjc71NnWNqKUL
+
+spot_prices:
+  linux:
+    m3_medium:
+      ap_southeast_1: 0.09
+      ap_southeast_2: 0.09
+      ap_northeast_1: 0.09
+      us_west_1: 0.07
+      us_west_2: 0.07
+      us_east_1: 0.07
+      eu_west_1: 0.07
+      eu_central_1: 0.07
+      sa_east_1: 0.09
+    m3_large:
+      us_west_1: 0.15
+      us_west_2: 0.15
+    m3_xlarge:
+      ap_southeast_1: 0.39
+      ap_southeast_2: 0.37
+      ap_northeast_1: 0.38
+      us_west_1: 0.30
+      us_west_2: 0.26
+      us_east_1: 0.26
+      eu_west_1: 0.29
+      eu_central_1: 0.33
+      sa_east_1: 0.38
+    m2_xlarge:
+      us_west_2: 0.26
+    r3_large:
+      us_west_1: 0.10
+      us_west_2: 0.10
+    r3_xlarge:
+      us_west_1: 0.25
+      us_west_2: 0.25
+    m4_large:
+      ap_southeast_1: 0.19
+      ap_southeast_2: 0.18
+      ap_northeast_1: 0.19
+      us_west_1: 0.15
+      us_west_2: 0.13
+      us_east_1: 0.13
+      eu_west_1: 0.14
+      eu_central_1: 0.16
+      sa_east_1: 0.0 # not available
+    m4_xlarge:
+      ap_southeast_1: 0.38
+      ap_southeast_2: 0.36
+      ap_northeast_1: 0.37
+      us_west_1: 0.35
+      us_west_2: 0.26
+      us_east_1: 0.26
+      eu_west_1: 0.28
+      eu_central_1: 0.31
+      sa_east_1: 0.0 # not available
+    m4_2xlarge:
+      ap_southeast_1: 0.75
+      ap_southeast_2: 0.74
+      ap_northeast_1: 0.71
+      us_west_1: 0.59
+      us_west_2: 0.51
+      us_east_1: 0.51
+      eu_west_1: 0.56
+      eu_central_1: 0.61
+      sa_east_1: 0.0 # not available

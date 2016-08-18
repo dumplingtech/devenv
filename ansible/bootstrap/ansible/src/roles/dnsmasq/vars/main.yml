@@ -1,0 +1,5 @@
+---
+
+interfaces:
+  - eth0
+  - tun0
