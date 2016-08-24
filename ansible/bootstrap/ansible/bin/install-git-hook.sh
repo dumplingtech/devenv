@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-repo_dir=$(dirname $(dirname ${dir}))/.git
+repo_dir=$(dirname $(dirname ${dir}))/../../.git
 
 if [ ! -d ${repo_dir}/hooks ]; then
     echo "Git hooks directory not found: ${repo_dir}/hooks"

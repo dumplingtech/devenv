@@ -17,7 +17,7 @@ modules="base python2 python3 etcd etcd-register nginx confd-haproxy ansible"
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 # check commit hook is installed to prevent accidental commit of unencrypted config files
-if [ -z "$force" ] && [ ! -f ${dir}/.git/hooks/pre-commit ]; then
+if [ -z "$force" ] && [ ! -f ${dir}/../../.git/hooks/pre-commit ]; then
     echo "Error: pre-commit hook not installed!"
     echo "Please run ${dir}/ansible/bin/install-git-hook.sh"
     exit 1
@@ -54,7 +54,7 @@ for module in $modules; do
             docker push ${image_prefix}/${module}:latest
             prefix='{"text": "*'
             suffix='* finished", "channel": "#devop", "username": "build-bot", "icon_emoji": ":package:"}'
-            curl -X POST --data-urlencode "payload=${prefix}${module}${suffix}" ${build_webhook}
+            # curl -X POST --data-urlencode "payload=${prefix}${module}${suffix}" ${build_webhook}
         fi
     fi
 done
