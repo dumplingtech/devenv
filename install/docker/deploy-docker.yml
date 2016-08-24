@@ -1,0 +1,17 @@
+---
+- hosts: all_hosts
+  vars:
+    http_port: 80
+    max_clients: 200
+  tasks:
+  - name: write the docker.service unit file
+    sudo: yes
+    copy: src=docker.service dest=/lib/systemd/system/ owner=root mode=644
+
+  - name: write the docker setup script
+    sudo: yes
+    template: src=docker-setup.temp dest=/tmp/docker-setup.sh owner=root mode=755
+
+  - name: execute docker setup script
+    sudo: yes
+    shell: /tmp/docker-setup.sh

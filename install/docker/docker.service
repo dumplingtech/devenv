@@ -1,0 +1,21 @@
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/docker daemon -H fd:// -s aufs  --bridge=cbr0 --iptables=false --ip-masq=false --log-level=warn
+DOCKER_NOFILE=1000000
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+Restart=always
+RestartSec=2s
+StartLimitInterval=0
+
+[Install]
+WantedBy=multi-user.target
+

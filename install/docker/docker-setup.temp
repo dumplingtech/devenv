@@ -1,0 +1,26 @@
+#!/bin/bash
+
+apt-get update -y
+apt-get install -y docker-engine
+
+systemctl stop docker
+
+# remove the existing docker0 and cbr0 setup
+iptables -t nat -F
+ip link set docker0 down
+ip link delete docker0
+ip link set cbr0 down
+ip link delete cbr0
+
+rm -rf /var/lib/docker/network
+
+# add cbr0
+brctl addbr cbr0
+ifconfig cbr0 {{ flannel_subnet }} up
+ifconfig cbr0 netmask 255.255.255.0 broadcast 0.0.0.0
+ip link set dev cbr0 up
+iptables -t nat -A POSTROUTING ! -d {{ flannel_subnet }} -m addrtype ! --dst-type LOCAL -j MASQUERADE
+
+systemctl daemon-reload
+systemctl start docker
+systemctl enable docker
