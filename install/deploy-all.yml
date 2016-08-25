@@ -1,0 +1,12 @@
+---
+# This playbook deploys a kubernetes cluster
+# with the default addons.
+
+# Install docker
+- hosts: all_hosts
+  become: yes
+  roles:
+    - docker
+  tags:
+    - docker
+

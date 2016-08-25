@@ -16,4 +16,4 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 INVENTORY_DIR="${ROOT_DIR}/inventory"
 
 inventory=${INVENTORY:-${INVENTORY_DIR}/inventory}
-ansible-playbook --private-key ~/.ssh/kube_aws_rsa -i ${inventory} ${ROOT_DIR}/deploy-docker.yml $@
+ansible-playbook --private-key ~/.ssh/kube_aws_rsa -i ${inventory} ${ROOT_DIR}/deploy-all.yml $@
