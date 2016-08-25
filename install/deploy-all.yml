@@ -4,7 +4,7 @@
 
 # Install docker
 - hosts: all_hosts
-  become: yes
+  become: true
   roles:
     - docker
   tags:
