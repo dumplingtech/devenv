@@ -1,0 +1,25 @@
+- name: install scripts
+  become: true
+  template: src=download-k8s.sh dest=/tmp/download-k8s.sh owner=root mode=755
+
+- name: execute k8s download script
+  become: true
+  shell: /tmp/download-k8s.sh
+
+- name: copy master systemd service
+  become: true
+  template: src=kube-master.service dest=/lib/systemd/system/kubelet.service owner=root mode=644
+  when: kube_role == "master"
+  notify:
+    - enable kubelet service
+
+- name: copy minion systemd service
+  become: true
+  template: src=kube-minion.service dest=/lib/systemd/system/kubelet.service owner=root mode=644
+  when: kube_role == "minion"
+  notify:
+    - enable kubelet service
+
+- name: start kubelet service
+  become: yes
+  command: systemctl start kubelet

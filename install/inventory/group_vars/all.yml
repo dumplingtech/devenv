@@ -1,10 +1,5 @@
-# This value determines how kubernetes binaries, config files, and service
-# files are loaded onto the target machines.  The following are the only
-# valid options:
-#
-# localBuild - requires make release to have been run to build local binaries
-# packageManager - will install packages from your distribution using yum/dnf/apt
-source_type: packageManager
+# k8s version
+k8s_version: 1.3.4
 
 # will be used as the Internal dns domain name if DNS is enabled. Services
 # will be discoverable under <service-name>.<namespace>.svc.<domainname>, e.g.
@@ -46,6 +41,11 @@ kube_master_api_port: 443
 # addresses do not need to be routable and must just be an unused block of space.
 kube_service_addresses: 10.3.0.0/24
 
+kube_dns_address: 10.3.0.10
+
+# can only be master/minion
+kube_role: master
+
 # Network implementation (flannel|opencontrail|contiv)
 networking: flannel
 
@@ -72,6 +72,15 @@ flannel_prefix: 16
 # will give to each node on your network.  With these defaults you should have
 # room for 4096 nodes with 254 pods per node.
 flannel_host_prefix: 24
+
+# common kubelet daemon argument
+kube_common_args: --cloud-provider=aws --config=/etc/kubernetes/manifests --allow-privileged=True --v=2 --cluster-dns={{ kube_dns_address }} --cluster-domain={{ cluster_name }} --configure-cbr0=false --non-masquerade-cidr=10.0.0.0/8 --cgroup-root=docker --babysit-daemons=true
+
+# master kubelet argument
+kube_master_args: --pod-cidr={{ flannel_subnet }}/24 --enable-debugging-handlers=false --hairpin-mode=none
+
+# minion kubelet argument
+kube_minion_args: --api-servers=https://{{ ansible_default_ipv4.address }} --enable-debugging-handlers=true
 
 # Create a default Contiv network for providing connectivity among pods
 # networking: contiv must be set to use Contiv networking

@@ -1,0 +1,3 @@
+- name: enable kubelet service
+  become: yes
+  command: systemctl enable kubelet

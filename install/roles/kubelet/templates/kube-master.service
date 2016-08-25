@@ -1,0 +1,11 @@
+[Unit]
+Description=Kubernetes Kubelet Server
+Documentation=https://github.com/kubernetes/kubernetes
+
+[Service]
+ExecStart=/opt/k8s/bin/kubelet {{ kube_common_args }} {{ kube_master_args }}
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
