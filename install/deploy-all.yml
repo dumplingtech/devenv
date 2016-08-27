@@ -17,3 +17,10 @@
   tags:
     - kubelet
 
+- hosts: all_hosts
+  roles:
+    - etcd
+  tags:
+    - etcd
+
+

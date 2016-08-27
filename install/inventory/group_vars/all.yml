@@ -111,3 +111,6 @@ dns_replicas: 1
 
 # See kube documentation for apiserver runtime config options.  Example below enables HPA, deployments features.
 # apiserver_extra_args: "--runtime-config=extensions/v1beta1/deployments=true"
+
+ec2_region: us-west-2
+internal_domain: dumplingtech.io

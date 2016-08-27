@@ -1,0 +1,14 @@
+- name: create manifest dir
+  become: true
+  file: path=/etc/kubernetes/manifests state=directory
+
+- name: install /etc/kubernetes/manifests/etcd.manifest
+  become: true
+  vars:
+    alert_url: http://localhost
+  template: src=etcd.yaml dest=/etc/kubernetes/manifests/etcd.yaml owner=root mode=644
+
+- name: restart kubelet service
+  become: yes
+  command: systemctl restart kubelet
+
