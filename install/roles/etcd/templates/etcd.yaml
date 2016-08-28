@@ -31,7 +31,7 @@ spec:
     livenessProbe:
       httpGet:
         host: 127.0.0.1
-        port: 7001
+        port: 4001
         path: "/health"
       initialDelaySeconds: 15
       timeoutSeconds: 15

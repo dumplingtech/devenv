@@ -1,6 +1,7 @@
 [Unit]
 Description=Kubernetes Kubelet Server
 Documentation=https://github.com/kubernetes/kubernetes
+After=docker.service
 
 [Service]
 ExecStart=/opt/k8s/bin/kubelet {{ kube_common_args }} {{ kube_minion_args }}

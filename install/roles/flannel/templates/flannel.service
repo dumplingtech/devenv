@@ -1,0 +1,13 @@
+[Unit]
+Description=flannel
+Documentation=https://github.com/coreos/flannel
+After=docker.service
+
+[Service]
+ExecStartPre=/opt/flannel/bin/wait-for-etcd.sh
+ExecStart=/opt/flannel/bin/flanneld --etcd-endpoints=http://127.0.0.1:4001
+Restart=always
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
