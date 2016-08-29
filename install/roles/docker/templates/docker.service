@@ -6,6 +6,7 @@ Requires=docker.socket
 
 [Service]
 Type=notify
+ExecStartPre=/opt/docker/bin/config-cbr0.sh
 ExecStart=/usr/bin/docker daemon -H fd:// -s aufs  --bridge=cbr0 --iptables=false --ip-masq=false --log-level=warn
 DOCKER_NOFILE=1000000
 MountFlags=slave

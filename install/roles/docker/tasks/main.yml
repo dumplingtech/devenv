@@ -1,3 +1,11 @@
+- name: create /opt/docker/bin directory
+  become: true
+  file: path=/opt/docker/bin state=directory mode=0775
+
+- name: install the docker config-cbr0.sh
+  become: true
+  template: src=config-cbr0.sh dest=/opt/docker/bin owner=root mode=755
+
 - name: write the docker.service unit file
   become: true
   template: src=docker.service dest=/lib/systemd/system/ owner=root mode=644
