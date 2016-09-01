@@ -10,7 +10,7 @@ then
         exit 0
     fi
 
-    netaddr="10.2.0.0"
+    netaddr="{{ flannel_subnet }}"
 fi
 
 # remove the existing docker0 and cbr0 setup

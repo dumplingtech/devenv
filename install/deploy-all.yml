@@ -2,21 +2,6 @@
 # This playbook deploys a kubernetes cluster
 # with the default addons.
 
-# Install docker
-- hosts: all_hosts
-  become: true
-  roles:
-    - docker
-  tags:
-    - docker
-
-- hosts: all_hosts
-  become: true
-  roles:
-    - kubelet
-  tags:
-    - kubelet
-
 - hosts: all_hosts
   roles:
     - etcd
@@ -28,5 +13,14 @@
     - flannel
   tags:
     - flannel
+
+
+- hosts: all_hosts
+  become: true
+  roles:
+    - docker
+  tags:
+    - docker
+
 
 

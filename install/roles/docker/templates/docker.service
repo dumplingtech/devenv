@@ -1,13 +1,15 @@
 [Unit]
 Description=Docker Application Container Engine
 Documentation=https://docs.docker.com
-After=network.target docker.socket
+After=network.target docker.socket flannel.service
 Requires=docker.socket
 
 [Service]
 Type=notify
 ExecStartPre=/opt/docker/bin/config-cbr0.sh
+#    `ifconfig flannel.1 | grep "inet addr" | cut -d ":" -f 2 | cut -d " " -f 1`
 ExecStart=/usr/bin/docker daemon -H fd:// -s aufs  --bridge=cbr0 --iptables=false --ip-masq=false --log-level=warn
+#    --mtu=`ifconfig flannel.1 | grep MTU | cut -d ":" -f 2 | cut -d " " -f 1`
 DOCKER_NOFILE=1000000
 MountFlags=slave
 LimitNOFILE=1048576

@@ -1,0 +1,12 @@
+[Unit]
+Description=etcd
+Documentation=https://github.com/coreos/etcd
+After=network.service
+
+[Service]
+ExecStart=/opt/etcd/bin/run-etcd.sh
+Restart=always
+KillMode=control-group
+
+[Install]
+WantedBy=multi-user.target

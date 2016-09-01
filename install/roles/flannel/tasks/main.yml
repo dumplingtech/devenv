@@ -1,23 +1,13 @@
-- name: install flannel download script
+- name: create tmp directory
   become: true
-  template: src=download-flannel.sh dest=/tmp/download-flannel.sh owner=root mode=755
+  file: path=/tmp/flannel state=directory mode=0755
 
-- name: execute flannel download script
+- name: download flannel install scripts
   become: true
-  shell: /tmp/download-flannel.sh
+  template: src={{item}} dest=/tmp/flannel/ mode=0755
+  with_fileglob:
+    - ../templates/*
 
-- name: install flannel wait-for-etcd script
+- name: run flannel install script
   become: true
-  template: src=wait-for-etcd.sh dest=/opt/flannel/bin/wait-for-etcd.sh owner=root mode=755
-
-- name: setup flannel service
-  become: yes
-  template: src=flannel.service dest=/lib/systemd/system/ owner=root mode=644
-
-- name: restart flannel service
-  become: yes
-  command: systemctl restart flannel
-
-- name: enable flannel service
-  become: yes
-  command: systemctl enable flannel
+  command: /tmp/flannel/download-flannel.sh

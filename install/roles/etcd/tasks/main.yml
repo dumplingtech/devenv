@@ -1,14 +1,13 @@
-- name: create manifest dir
+- name: create tmp directory
   become: true
-  file: path=/etc/kubernetes/manifests state=directory
+  file: path=/tmp/etcd state=directory mode=0755
 
-- name: install /etc/kubernetes/manifests/etcd.manifest
+- name: download etcd install scripts
   become: true
-  vars:
-    alert_url: http://localhost
-  template: src=etcd.yaml dest=/etc/kubernetes/manifests/etcd.yaml owner=root mode=644
+  template: src={{item}} dest=/tmp/etcd/ mode=0755
+  with_fileglob:
+    - ../templates/*
 
-- name: restart kubelet service
-  become: yes
-  command: systemctl restart kubelet
-
+- name: run etcd install script
+  become: true
+  command: /tmp/etcd/download.sh
