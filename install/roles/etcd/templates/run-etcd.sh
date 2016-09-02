@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# since we automatically remove the members, we must start from a clean state everytime
+rm -rf /var/etcd/data
+
 ETCD_CLIENT_PORT="4001" \
 ETCD_SERVER_PORT="7001" \
 ETCD_LISTEN_PEER_URLS="http://0.0.0.0:7001" \

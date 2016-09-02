@@ -22,5 +22,10 @@
   tags:
     - docker
 
-
+- hosts: all_hosts
+  become: true
+  roles:
+    - kubelet
+  tags:
+    - kubelet
 
