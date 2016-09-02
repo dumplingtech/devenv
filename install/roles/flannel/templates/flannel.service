@@ -4,9 +4,8 @@ Documentation=https://github.com/coreos/flannel
 After=etcd.service
 
 [Service]
-# ExecStartPre=etcdctl set /coreos.com/network/config '{"Network":"{{ flannel_subnet }}/16", "Backend": {"Type": "VXLAN"}}'
+ExecStartPre=/usr/local/bin/etcdctl set /coreos.com/network/config '{"Network":"{{ flannel_subnet }}/16", "Backend": {"Type": "VXLAN"}}'
 ExecStart=/usr/local/bin/flanneld --etcd-endpoints=http://127.0.0.1:4001
-# ExecStartPost=sleep 3; /opt/docker/bin/config-cbr0.sh `ifconfig flannel.1 | grep "inet addr" | cut -d ':' -f 2 | cut -d ' ' -f 1`
 Restart=always
 KillMode=process
 
