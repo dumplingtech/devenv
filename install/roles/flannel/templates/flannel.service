@@ -4,7 +4,7 @@ Documentation=https://github.com/coreos/flannel
 After=etcd.service
 
 [Service]
-ExecStartPre=/usr/local/bin/etcdctl set /coreos.com/network/config '{"Network":"{{ flannel_subnet }}/16", "Backend": {"Type": "VXLAN"}}'
+ExecStartPre=/opt/flannel/bin/wait-for-etcd.sh
 ExecStart=/usr/local/bin/flanneld --etcd-endpoints=http://127.0.0.1:4001
 Restart=always
 KillMode=process

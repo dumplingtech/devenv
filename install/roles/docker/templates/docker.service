@@ -8,7 +8,6 @@ Requires=docker.socket
 Type=notify
 ExecStartPre=/opt/docker/bin/config-cbr0.sh
 ExecStart=/usr/bin/docker daemon -H fd:// -s aufs  --bridge=cbr0 --iptables=false --ip-masq=false --log-level=warn --config-file=/opt/docker/config.json
-DOCKER_NOFILE=1000000
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576

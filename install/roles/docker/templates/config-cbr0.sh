@@ -1,6 +1,15 @@
 #!/bin/bash
 
-flanneladdr=`ifconfig flannel.1 | grep "inet addr" | cut -d ":" -f 2 | cut -d " " -f 1`
+
+for i in {1..20}; do
+    flanneladdr=`ifconfig flannel.1 | grep "inet addr" | cut -d ":" -f 2 | cut -d " " -f 1`
+    if [ -n "$flanneladdr" ]
+    then
+        break
+    fi
+    sleep 1
+done
+
 flannelmtu=`ifconfig flannel.1 | grep MTU | cut -d ":" -f 2 | cut -d " " -f 1`
 
 echo "configuring cbr0 to use ${flanneladdr} mtu ${flannelmtu}"

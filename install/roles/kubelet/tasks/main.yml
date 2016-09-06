@@ -10,16 +10,24 @@
   become: true
   template: src=kube-master.service dest=/lib/systemd/system/kubelet.service owner=root mode=644
   when: kube_role == "master"
-  notify:
-    - enable kubelet service
+
+- name: copy master manifest files
+  become: true
+  template: src={{item}} dest=/etc/kubernetes/manifests/ owner=root mode=644
+  with_fileglob:
+    - ../templates/*.manifest
+  when: kube_role == "master"
 
 - name: copy minion systemd service
   become: true
   template: src=kube-minion.service dest=/lib/systemd/system/kubelet.service owner=root mode=644
   when: kube_role == "minion"
-  notify:
-    - enable kubelet service
 
 - name: start kubelet service
   become: yes
   command: systemctl start kubelet
+
+- name: enable kubelet service
+  become: yes
+  command: systemctl enable kubelet
+
