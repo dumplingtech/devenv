@@ -2,51 +2,41 @@
 "apiVersion": "v1",
 "kind": "Pod",
 "metadata": {
-  "name":"kube-apiserver",
+  "name":"kube-controller-manager",
   "namespace": "kube-system",
   "labels": {
     "tier": "control-plane",
-    "component": "kube-apiserver"
+    "component": "kube-controller-manager"
   }
 },
 "spec":{
 "hostNetwork": true,
 "containers":[
     {
-    "name": "kube-apiserver",
+    "name": "kube-controller-manager",
     "image": "dumplingtech/hyperkube:1.3.5",
     "resources": {
       "requests": {
-        "cpu": "250m"
+        "cpu": "200m"
       }
     },
     "command": [
-	         "/bin/sh",
+                 "/bin/sh",
                  "-c",
-                 "/usr/local/bin/hyperkube apiserver --address=127.0.0.1 --etcd-servers=http://127.0.0.1:4001 --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,ResourceQuota --service-cluster-ip-range={{ kube_service_addresses }} --secure-port=443 --v=2 --authorization-mode=AlwaysAllow --allow-privileged=True 1>>/var/log/kube-apiserver.log 2>&1"
+                 "/usr/local/bin/hyperkube controller-manager --master=127.0.0.1:8080 --cluster-name={{ cluster_name }} --cluster-cidr={{ flannel_subnet }}/{{ flannel_prefix }} --allocate-node-cidrs=false --service-cluster-ip-range={{ kube_service_addresses }} --v=2 1>>/var/log/kube-controller-manager.log 2>&1"
                ],
     "livenessProbe": {
       "httpGet": {
         "host": "127.0.0.1",
-        "port": 8080,
+        "port": 10252,
         "path": "/healthz"
       },
       "initialDelaySeconds": 15,
       "timeoutSeconds": 15
     },
-    "ports":[
-      { "name": "https",
-        "containerPort": 443,
-        "hostPort": 443},{
-       "name": "local",
-        "containerPort": 8080,
-        "hostPort": 8080}
-        ],
     "volumeMounts": [
         
         {"name": "usrsharessl","mountPath": "/usr/share/ssl", "readOnly": true}, {"name": "usrssl","mountPath": "/usr/ssl", "readOnly": true}, {"name": "usrlibssl","mountPath": "/usr/lib/ssl", "readOnly": true}, {"name": "usrlocalopenssl","mountPath": "/usr/local/openssl", "readOnly": true},
-        
-        
         { "name": "srvkube",
         "mountPath": "/srv/kubernetes",
         "readOnly": true},
@@ -64,18 +54,13 @@
         "readOnly": true},
         { "name": "etcpki",
         "mountPath": "/etc/pki",
-        "readOnly": true},
-        { "name": "srvsshproxy",
-        "mountPath": "/srv/sshproxy",
-        "readOnly": false}
+        "readOnly": true}
       ]
     }
 ],
 "volumes":[
   
   {"name": "usrsharessl","hostPath": {"path": "/usr/share/ssl"}}, {"name": "usrssl","hostPath": {"path": "/usr/ssl"}}, {"name": "usrlibssl","hostPath": {"path": "/usr/lib/ssl"}}, {"name": "usrlocalopenssl","hostPath": {"path": "/usr/local/openssl"}},
-  
-  
   { "name": "srvkube",
     "hostPath": {
         "path": "/srv/kubernetes"}
@@ -99,10 +84,6 @@
   { "name": "etcpki",
     "hostPath": {
         "path": "/etc/pki"}
-  },
-  { "name": "srvsshproxy",
-    "hostPath": {
-        "path": "/srv/sshproxy"}
   }
 ]
 }}
