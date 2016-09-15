@@ -7,6 +7,9 @@ flannel_version: 0.5.5
 # myservice.default.svc.cluster.local
 cluster_name: cluster.local
 
+# must change this to point to the kube master
+api_server_address: 172.20.0.221
+
 # Account name of remote user. Ansible will use this user account to ssh into
 # the managed machines. The user must be able to use sudo without asking
 # for password unless ansible_sudo_pass is set
@@ -45,7 +48,7 @@ kube_service_addresses: 10.3.0.0/24
 kube_dns_address: 10.3.0.10
 
 # can only be master/minion
-kube_role: master
+kube_role: minion
 
 # Network implementation (flannel|opencontrail|contiv)
 networking: flannel
@@ -81,7 +84,7 @@ kube_common_args: --cloud-provider=aws --config=/etc/kubernetes/manifests --allo
 kube_master_args: --pod-cidr={{ flannel_subnet }}/24 --enable-debugging-handlers=false --hairpin-mode=none
 
 # minion kubelet argument
-kube_minion_args: --api-servers=https://{{ ansible_default_ipv4.address }} --enable-debugging-handlers=true
+kube_minion_args: --api-servers=https://{{ api_server_address }} --enable-debugging-handlers=true
 
 # Create a default Contiv network for providing connectivity among pods
 # networking: contiv must be set to use Contiv networking
