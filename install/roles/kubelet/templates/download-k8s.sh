@@ -15,4 +15,6 @@ grep -q "{{ k8s_version }}" /opt/k8s/.k8s_version 2>/dev/null || {
   mv kubernetes/server/kubernetes/server/bin /opt/k8s/bin
   echo {{ k8s_version }} > /opt/k8s/.k8s_version
   rm -rf /tmp/k8s
+
+  ln -s /opt/k8s/bin/kubectl /usr/local/bin/
 }

@@ -21,6 +21,20 @@
 - file: path=/etc/kubernetes/addons state=directory mode=0755
 - file: path=/etc/kubernetes/addons/dns state=directory mode=0755
 - file: path=/etc/kubernetes/addons/dashboard state=directory mode=0755
+- file: path=/srv/kubernetes state=directory mode=0755
+
+- name: copy ca.crt
+  become: true
+  template: src=certs/ca.crt dest=/srv/kubernetes/ owner=root mode=644
+
+- name: copy server certificates
+  become: true
+  template: src={{item}} dest=/srv/kubernetes/ owner=root mode=644
+  with_fileglob:
+    - ../templates/certs/server.*
+    - ../templates/certs/*.csv
+    - ../templates/abac-authz-policy.jsonl
+  when: kube_role == "master"
 
 - name: install dns addon
   become: true

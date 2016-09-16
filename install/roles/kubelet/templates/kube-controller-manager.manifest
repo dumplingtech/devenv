@@ -23,7 +23,7 @@
     "command": [
                  "/bin/sh",
                  "-c",
-                 "/usr/local/bin/hyperkube controller-manager --master=127.0.0.1:8080 --cluster-name={{ cluster_name }} --cluster-cidr={{ flannel_subnet }}/{{ flannel_prefix }} --allocate-node-cidrs=false --service-cluster-ip-range={{ kube_service_addresses }} --v=2 1>>/var/log/kube-controller-manager.log 2>&1"
+                 "/usr/local/bin/hyperkube controller-manager --master=127.0.0.1:8080 --cluster-name={{ cluster_name }} --cluster-cidr={{ flannel_subnet }}/{{ flannel_prefix }} --allocate-node-cidrs=false --service-cluster-ip-range={{ kube_service_addresses }} --service-account-private-key-file=/srv/kubernetes/server.key --v=2 --root-ca-file=/srv/kubernetes/ca.crt 1>>/var/log/kube-controller-manager.log 2>&1"
                ],
     "livenessProbe": {
       "httpGet": {

@@ -23,7 +23,7 @@
     "command": [
 	         "/bin/sh",
                  "-c",
-                 "/usr/local/bin/hyperkube apiserver --address=127.0.0.1 --etcd-servers=http://127.0.0.1:4001 --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,ResourceQuota --service-cluster-ip-range={{ kube_service_addresses }} --secure-port=443 --v=2 --authorization-mode=AlwaysAllow --allow-privileged=True 1>>/var/log/kube-apiserver.log 2>&1"
+                 "/usr/local/bin/hyperkube apiserver --address=127.0.0.1 --etcd-servers=http://127.0.0.1:4001 --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,ResourceQuota --service-cluster-ip-range={{ kube_service_addresses }} --client-ca-file=/srv/kubernetes/ca.crt --tls-cert-file=/srv/kubernetes/server.crt --tls-private-key-file=/srv/kubernetes/server.key --basic-auth-file=/srv/kubernetes/basic_auth.csv --token-auth-file=/srv/kubernetes/known_tokens.csv --authorization-mode=ABAC --authorization-policy-file=/srv/kubernetes/abac-authz-policy.jsonl  --secure-port=443 --v=2 --allow-privileged=True 1>>/var/log/kube-apiserver.log 2>&1"
                ],
     "livenessProbe": {
       "httpGet": {
