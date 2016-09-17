@@ -5,7 +5,10 @@ flannel_version: 0.5.5
 # will be used as the Internal dns domain name if DNS is enabled. Services
 # will be discoverable under <service-name>.<namespace>.svc.<domainname>, e.g.
 # myservice.default.svc.cluster.local
-cluster_name: cluster.local
+cluster_domain: cluster.local
+
+# cluster name used in kubeconfig
+cluster_name: dumpling
 
 # must change this to point to the kube master
 api_server_address: 172.20.0.221
@@ -78,7 +81,7 @@ flannel_prefix: 16
 flannel_host_prefix: 24
 
 # common kubelet daemon argument
-kube_common_args: --cloud-provider=aws --config=/etc/kubernetes/manifests --allow-privileged=True --v=2 --cluster-dns={{ kube_dns_address }} --cluster-domain={{ cluster_name }} --configure-cbr0=false --non-masquerade-cidr=10.0.0.0/8 --cgroup-root=docker --babysit-daemons=true
+kube_common_args: --cloud-provider=aws --config=/etc/kubernetes/manifests --allow-privileged=True --v=2 --cluster-dns={{ kube_dns_address }} --cluster-domain={{ cluster_domain }} --configure-cbr0=false --non-masquerade-cidr=10.0.0.0/8 --cgroup-root=docker --babysit-daemons=true
 
 # master kubelet argument
 kube_master_args: --pod-cidr={{ flannel_subnet }}/24 --enable-debugging-handlers=false --hairpin-mode=none

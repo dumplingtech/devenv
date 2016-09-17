@@ -36,6 +36,10 @@
     - ../templates/abac-authz-policy.jsonl
   when: kube_role == "master"
 
+- name: copy kubeconfig
+  become: true
+  template: src=certs/kubeconfig dest=/var/lib/kubelet/ owner=root mode=644
+
 - name: install dns addon
   become: true
   template: src={{item}} dest=/etc/kubernetes/addons/dns/ owner=root mode=644
