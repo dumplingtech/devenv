@@ -1,3 +1,11 @@
+- file: path=/etc/kubernetes/manifests state=directory mode=0755
+- file: path=/etc/kubernetes/addons state=directory mode=0755
+- file: path=/etc/kubernetes/addons/dns state=directory mode=0755
+- file: path=/etc/kubernetes/addons/dashboard state=directory mode=0755
+- file: path=/srv/kubernetes state=directory mode=0755
+- file: path=/var/lib/kubelet state=directory mode=0755
+- file: path=/var/lib/kube-proxy state=directory mode=0755
+
 - name: install scripts
   become: true
   template: src=download-k8s.sh dest=/tmp/download-k8s.sh owner=root mode=755
@@ -18,11 +26,6 @@
     - ../templates/*.manifest
   when: kube_role == "master"
 
-- file: path=/etc/kubernetes/addons state=directory mode=0755
-- file: path=/etc/kubernetes/addons/dns state=directory mode=0755
-- file: path=/etc/kubernetes/addons/dashboard state=directory mode=0755
-- file: path=/srv/kubernetes state=directory mode=0755
-
 - name: copy ca.crt
   become: true
   template: src=certs/ca.crt dest=/srv/kubernetes/ owner=root mode=644
@@ -39,6 +42,10 @@
 - name: copy kubeconfig
   become: true
   template: src=certs/kubeconfig dest=/var/lib/kubelet/ owner=root mode=644
+
+- name: copy proxy kubeconfig
+  become: true
+  template: src=certs/proxy-kubeconfig dest=/var/lib/kube-proxy/kubeconfig owner=root mode=644
 
 - name: install dns addon
   become: true
@@ -57,6 +64,11 @@
 - name: copy minion systemd service
   become: true
   template: src=kube-minion.service dest=/lib/systemd/system/kubelet.service owner=root mode=644
+  when: kube_role == "minion"
+
+- name: copy minion manifest files
+  become: true
+  template: src=kube-proxy.manifest dest=/etc/kubernetes/manifests/ owner=root mode=644
   when: kube_role == "minion"
 
 - name: start kubelet service

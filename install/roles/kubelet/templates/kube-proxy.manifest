@@ -1,0 +1,44 @@
+# kube-proxy podspec
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kube-proxy
+  namespace: kube-system
+  labels:
+    tier: node
+    component: kube-proxy
+spec:
+  hostNetwork: true
+  containers:
+  - name: kube-proxy
+    image: dumplingtech/hyperkube:1.3.5
+    resources:
+      requests:
+        cpu: 100m
+    command:
+    - /bin/sh
+    - -c
+    - /usr/local/bin/hyperkube proxy --master=https://{{ api_server_address }} --kubeconfig=/var/lib/kube-proxy/kubeconfig  --cluster-cidr={{ flannel_subnet }}/{{ flannel_prefix }} --resource-container="" --v=2  1>>/var/log/kube-proxy.log 2>&1
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /etc/ssl/certs
+      name: ssl-certs-host
+      readOnly: true
+    - mountPath: /var/log
+      name: varlog
+      readOnly: false
+    - mountPath: /var/lib/kube-proxy/kubeconfig
+      name: kubeconfig
+      readOnly: false
+  volumes:
+  - hostPath:
+      path: /usr/share/ca-certificates
+    name: ssl-certs-host
+  - hostPath:
+      path: /var/lib/kube-proxy/kubeconfig
+    name: kubeconfig
+  - hostPath:
+      path: /var/log
+    name: varlog
+

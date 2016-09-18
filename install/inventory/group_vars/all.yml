@@ -46,9 +46,9 @@ kube_master_api_port: 443
 # Kubernetes services will get fake IP addresses from this range.
 # This range must not conflict with anything in your infrastructure. These
 # addresses do not need to be routable and must just be an unused block of space.
-kube_service_addresses: 10.3.0.0/24
+kube_service_addresses: 10.0.0.0/24
 
-kube_dns_address: 10.3.0.10
+kube_dns_address: 10.0.0.10
 
 # can only be master/minion
 kube_role: minion
