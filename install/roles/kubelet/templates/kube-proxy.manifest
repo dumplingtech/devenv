@@ -28,7 +28,7 @@ spec:
     - mountPath: /var/log
       name: varlog
       readOnly: false
-    - mountPath: /var/lib/kube-proxy/kubeconfig
+    - mountPath: /var/lib/kube-proxy
       name: kubeconfig
       readOnly: false
   volumes:
@@ -36,7 +36,7 @@ spec:
       path: /usr/share/ca-certificates
     name: ssl-certs-host
   - hostPath:
-      path: /var/lib/kube-proxy/kubeconfig
+      path: /var/lib/kube-proxy
     name: kubeconfig
   - hostPath:
       path: /var/log
