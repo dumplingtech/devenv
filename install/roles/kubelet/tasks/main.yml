@@ -2,6 +2,7 @@
 - file: path=/etc/kubernetes/addons state=directory mode=0755
 - file: path=/etc/kubernetes/addons/dns state=directory mode=0755
 - file: path=/etc/kubernetes/addons/dashboard state=directory mode=0755
+- file: path=/etc/kubernetes/addons/heapster state=directory mode=0755
 - file: path=/srv/kubernetes state=directory mode=0755
 - file: path=/var/lib/kubelet state=directory mode=0755
 - file: path=/var/lib/kube-proxy state=directory mode=0755
@@ -59,6 +60,13 @@
   template: src={{item}} dest=/etc/kubernetes/addons/dashboard/ owner=root mode=644
   with_fileglob:
     - ../templates/addons/dashboard/*
+  when: kube_role == "master"
+
+- name: install heapster addon
+  become: true
+  template: src={{item}} dest=/etc/kubernetes/addons/heapster/ owner=root mode=644
+  with_fileglob:
+    - ../templates/addons/heapster/*
   when: kube_role == "master"
 
 - name: copy minion systemd service
